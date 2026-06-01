@@ -117,15 +117,15 @@
 
     .slide.is-active { opacity: 1; pointer-events: all; }
 
-    /* Per-slide gradients — palette Viteos #EB6A00 / #70856C */
-    .slide[data-id="1"] { background: radial-gradient(ellipse 70% 60% at 30% 55%, #1e0900 0%, #080200 50%, #000 100%); }
-    .slide[data-id="2"] { background: radial-gradient(ellipse 80% 65% at 25% 60%, #200b00 0%, #0c0400 45%, #000 100%); }
-    .slide[data-id="3"] { background: radial-gradient(ellipse 90% 70% at 55% 40%, #0a0e09 0%, #050805 50%, #000 100%); }
-    .slide[data-id="4"] { background: radial-gradient(ellipse 75% 65% at 35% 55%, #081209 0%, #040b04 50%, #000 100%); }
-    .slide[data-id="5"] { background: radial-gradient(ellipse 80% 70% at 60% 45%, #220c00 0%, #110600 50%, #000 100%); }
-    .slide[data-id="6"] { background: radial-gradient(ellipse 75% 65% at 40% 50%, #0b0e0a 0%, #060806 50%, #000 100%); }
-    .slide[data-id="7"] { background: radial-gradient(ellipse 80% 70% at 45% 55%, #091209 0%, #040804 50%, #000 100%); }
-    .slide[data-id="8"] { background: radial-gradient(ellipse 60% 55% at 50% 50%, #1a0800 0%, #090300 50%, #000 100%); }
+    /* Per-slide backgrounds — logique v2 : noir pur (1,2,6,8) / image défocalisée (3,4,5,7) */
+    .slide[data-id="1"] { background: #000; }
+    .slide[data-id="2"] { background: #000; }
+    .slide[data-id="3"] { background: radial-gradient(ellipse 110% 80% at 55% 50%, #0d1108 0%, #070a05 40%, #020302 75%, #000 100%); }
+    .slide[data-id="4"] { background: radial-gradient(ellipse 110% 80% at 40% 55%, #0e1208 0%, #080b04 40%, #030402 75%, #000 100%); }
+    .slide[data-id="5"] { background: radial-gradient(ellipse 110% 80% at 60% 45%, #150803 0%, #0c0502 40%, #040201 75%, #000 100%); }
+    .slide[data-id="6"] { background: #000; }
+    .slide[data-id="7"] { background: radial-gradient(ellipse 120% 90% at 50% 50%, #0c1a0c 0%, #071007 35%, #030703 65%, #000 100%); }
+    .slide[data-id="8"] { background: #000; }
 
     /* Decorative glow top-right */
     .slide::after {
@@ -349,15 +349,15 @@
       color: rgba(255,255,255,0.45);
     }
 
-    /* Thumb gradients — palette Viteos */
-    .thumb[data-id="1"] .thumb-bg { background: radial-gradient(ellipse at 30% 50%, #2e0e00 0%, #000 80%); }
-    .thumb[data-id="2"] .thumb-bg { background: radial-gradient(ellipse at 25% 60%, #2a0e00 0%, #0e0400 60%, #000 100%); }
-    .thumb[data-id="3"] .thumb-bg { background: radial-gradient(ellipse at 55% 40%, #0f1610 0%, #060906 60%, #000 100%); }
-    .thumb[data-id="4"] .thumb-bg { background: radial-gradient(ellipse at 35% 55%, #0a1a0b 0%, #050c05 60%, #000 100%); }
-    .thumb[data-id="5"] .thumb-bg { background: radial-gradient(ellipse at 60% 45%, #321000 0%, #180800 60%, #000 100%); }
-    .thumb[data-id="6"] .thumb-bg { background: radial-gradient(ellipse at 40% 50%, #101510 0%, #080c08 60%, #000 100%); }
-    .thumb[data-id="7"] .thumb-bg { background: radial-gradient(ellipse at 45% 55%, #0b1a0b 0%, #060e06 60%, #000 100%); }
-    .thumb[data-id="8"] .thumb-bg { background: radial-gradient(ellipse at 50% 50%, #221000 0%, #0c0500 60%, #000 100%); }
+    /* Thumb gradients — logique v2 */
+    .thumb[data-id="1"] .thumb-bg { background: #000; }
+    .thumb[data-id="2"] .thumb-bg { background: #000; }
+    .thumb[data-id="3"] .thumb-bg { background: radial-gradient(ellipse at 55% 50%, #0d1108 0%, #040604 60%, #000 100%); }
+    .thumb[data-id="4"] .thumb-bg { background: radial-gradient(ellipse at 40% 55%, #0e1209 0%, #050804 60%, #000 100%); }
+    .thumb[data-id="5"] .thumb-bg { background: radial-gradient(ellipse at 60% 45%, #160904 0%, #0a0503 60%, #000 100%); }
+    .thumb[data-id="6"] .thumb-bg { background: #000; }
+    .thumb[data-id="7"] .thumb-bg { background: radial-gradient(ellipse at 50% 50%, #0d1c0d 0%, #070f07 60%, #000 100%); }
+    .thumb[data-id="8"] .thumb-bg { background: #000; }
 
     /* ── PROGRESS BAR ─────────────────────────────────── */
     .progress-bar {
@@ -466,9 +466,10 @@ const SLIDES = [
     note: 'Noir. Une étincelle s\'allume, un trait lumineux démarre sa course.',
     svgPath: 'M -50 300 Q 300 100 650 280 Q 900 420 1100 180',
     info: [
-      { label: 'Visuel', text: 'Noir total. Une étincelle jaillit et un fil lumineux démarre sa course à travers le cadre — le « fil de lumière » du film.' },
+      { label: 'Fond', text: 'Noir pur — le vide est un choix, pas un manque.' },
+      { label: 'Visuel', text: 'Une étincelle jaillit et un fil lumineux démarre sa course à travers le cadre — le « fil de lumière » du film.' },
       { label: 'À l\'écran', text: '« Aujourd\'hui, Viteos c\'est… » — typographie suisse animée. L\'anaphore qui structure tout le film.' },
-      { label: 'Technique', text: 'Shape layer + trim paths + glow sous After Effects. Nappe grave + spark audio.' },
+      { label: 'Technique', text: 'Shape layer + trim paths + glow (After Effects). Nappe grave + spark audio.' },
     ],
   },
   {
@@ -483,9 +484,10 @@ const SLIDES = [
     note: 'Le fil de lumière dessine la carte du canton de Neuchâtel.',
     svgPath: 'M 80 500 Q 250 200 500 350 Q 750 500 950 200 Q 1100 50 1300 150',
     info: [
-      { label: 'Visuel', text: 'Le fil de lumière trace en trait épuré la carte du canton de Neuchâtel — ancrage géographique fort.' },
+      { label: 'Fond', text: 'Noir pur — ou texture topographique très discrète en filigrane.' },
+      { label: 'Visuel', text: 'Le fil trace en trait épuré la carte du canton de Neuchâtel — ancrage géographique fort.' },
       { label: 'À l\'écran', text: '100\'000+ clients · « actrice de la transition énergétique ».' },
-      { label: 'Technique', text: 'Tracé SVG animé sur fond d\'archive dégradé. LUT unique : noirs crushés + accent couleur marque.' },
+      { label: 'Technique', text: 'Tracé SVG animé. LUT unique : noirs crushés + accent couleur marque réservé à la lumière.' },
     ],
   },
   {
@@ -504,9 +506,10 @@ const SLIDES = [
     note: 'Le fil se ramifie — les chiffres atterrissent en cadence.',
     svgPath: 'M 0 400 C 200 150 350 450 550 250 C 750 50 900 350 1100 200 L 1350 300',
     info: [
-      { label: 'Visuel', text: 'Le fil se ramifie sur le territoire. Archives infra quasi-désaturées en fond. Les chiffres atterrissent en cadence.' },
+      { label: 'Fond', text: 'Image défocalisée + sombre : infrastructures (conduites, lignes). Slow push lent 3–5 %. Désaturation totale sauf accent marque.' },
+      { label: 'Visuel', text: 'Le fil se ramifie sur le territoire. Les chiffres atterrissent en cadence sur fond d\'archive.' },
       { label: 'À l\'écran', text: 'Eau 9,4 mio m³ · Chaleur 190 GWh · Électricité 483 GWh · Gaz 908 GWh · 75 mio investis.' },
-      { label: 'Technique', text: 'Compteurs odomètre animés (rolling numbers) — 100 % post-prod, effet premium sans tournage.' },
+      { label: 'Technique', text: 'Compteurs odomètre animés — 100 % post-prod. Calque noir 40–60 % sur l\'archive. Grain unifié sur la maître.' },
     ],
   },
   {
@@ -524,9 +527,10 @@ const SLIDES = [
     note: 'Lumière = lumière solaire. Panneaux, bornes de recharge.',
     svgPath: 'M -80 200 Q 200 400 500 180 Q 750 -20 1000 250 Q 1150 380 1350 220',
     info: [
-      { label: 'Visuel', text: 'Lumière = lumière solaire. La couleur d\'accent devient la lumière du soleil. Panneaux et bornes de recharge en archives.' },
+      { label: 'Fond', text: 'Image défocalisée + sombre : panneaux solaires, bornes de recharge. Drift latéral léger. Couleurs criardes désaturées.' },
+      { label: 'Visuel', text: 'Lumière = lumière solaire. L\'accent marque devient la lumière du soleil — continuité graphique du fil.' },
       { label: 'À l\'écran', text: '29 MWc solaire · 144 RCP · 62 bornes publiques.' },
-      { label: 'Technique', text: 'Accent couleur réservé à la lumière et aux chiffres. Image désaturée + glow = effet luxe sans budget.' },
+      { label: 'Technique', text: 'Calque noir 40–60 % sur archive. Drift latéral (jamais de mouvement rapide). Accent couleur seul = luxe.' },
     ],
   },
   {
@@ -545,9 +549,10 @@ const SLIDES = [
     note: 'Rupture chaude : visages, équipes, événements. Le fil respire.',
     svgPath: 'M 0 250 S 280 500 560 300 S 840 80 1100 320 S 1250 430 1400 260',
     info: [
-      { label: 'Visuel', text: 'Rupture de ton — chaleur humaine. Silhouettes rétroéclairées, visages, événements d\'équipe. Le fil ralentit et « respire ».' },
+      { label: 'Fond', text: 'Image défocalisée + sombre : visages, équipes, événements en contre-jour. Le flou transforme l\'archive en texture.' },
+      { label: 'Visuel', text: 'Rupture chaude. Silhouettes rétroéclairées — le fil ralentit et respire. Moment d\'émotion au cœur du film.' },
       { label: 'À l\'écran', text: '394 collaborateur·rices · 14 apprenti·es · 150 métiers · 100+ partenariats.' },
-      { label: 'Audio', text: 'Transition musicale vers un registre plus humain et chaleureux. Moment d\'émotion au cœur du film.' },
+      { label: 'Audio', text: 'Transition musicale vers un registre plus humain. Slow push uniquement — jamais de mouvement rapide.' },
     ],
   },
   {
@@ -564,9 +569,10 @@ const SLIDES = [
     note: 'Le fil devient une timeline qui avance vers l\'horizon.',
     svgPath: 'M -100 350 L 250 350 L 250 200 L 600 200 L 600 320 L 950 320 L 950 150 L 1350 150',
     info: [
-      { label: 'Visuel', text: 'Le fil de lumière se transforme progressivement en frise chronologique. Jalons qui s\'allument l\'un après l\'autre.' },
+      { label: 'Fond', text: 'Noir pur — respiration avant le final. L\'alternance vide / plein crée le rythme du film.' },
+      { label: 'Visuel', text: 'Le fil se morphe en frise chronologique lumineuse. Jalons qui s\'allument. Sens de la progression.' },
       { label: 'À l\'écran', text: '2018 BETELEC → 2019 Swiss-Green → 2025 Viteos Solutions, FTG, EMG.' },
-      { label: 'Technique', text: 'Morphing du fil en timeline — continuité graphique assurée par le tracé commun.' },
+      { label: 'Technique AE', text: 'Le fil quitte la séq. 5 pendant qu\'il entame la séq. 7 — chevauchement des pré-compos sur la maître.' },
     ],
   },
   {
@@ -579,9 +585,10 @@ const SLIDES = [
     note: 'Le fil se résout dans les images de synthèse. Crescendo musical.',
     svgPath: 'M -50 500 Q 150 100 400 300 Q 600 460 800 150 Q 950 20 1150 280 Q 1280 420 1400 100',
     info: [
-      { label: 'Visuel', text: 'Le fil se résout dans les images de synthèse 3D. Site principal, Agriteos, STEP, Moyats s\'enchaînent en crescendo.' },
-      { label: 'À l\'écran', text: '« Nos grands projets » — les visuels 3D priment sur le texte. Pic émotionnel du film.' },
-      { label: 'Audio', text: 'Pic musical. C\'est le moment « wow » — les images de synthèse font le travail.' },
+      { label: 'Fond', text: 'Images de synthèse plein cadre — peu ou pas assombries. C\'est le pic : on les montre sans retenue.' },
+      { label: 'Visuel', text: 'Le fil se résout dans les rendus 3D. Site principal, Agriteos, STEP, Moyats en crescendo.' },
+      { label: 'À l\'écran', text: '« Nos grands projets » — les visuels priment. MJ sert de référence d\'ambiance pour le studio 3D.' },
+      { label: 'Audio', text: 'Pic musical — le moment wow. Glow, LUT et grain en calques d\'ajustement sur la maître uniquement.' },
     ],
   },
   {
@@ -593,7 +600,8 @@ const SLIDES = [
     note: 'Logo. La lumière se pose. Fondu au noir.',
     svgPath: 'M 400 600 Q 500 400 600 350 Q 700 300 700 300',
     info: [
-      { label: 'Visuel', text: 'Logo Viteos. Le fil de lumière se stabilise et s\'immobilise doucement. Vaste espace négatif.' },
+      { label: 'Fond', text: 'Noir pur — retour au vide du début. Boucle de la lumière vers le silence.' },
+      { label: 'Visuel', text: 'Logo Viteos. Le fil se stabilise et s\'immobilise doucement. Vaste espace négatif.' },
       { label: 'À l\'écran', text: '« Ensemble, nous construisons l\'avenir énergétique du canton. »' },
       { label: 'Audio', text: 'Résolution musicale. Fondu au noir. Silence.' },
     ],
