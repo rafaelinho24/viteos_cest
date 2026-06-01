@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viteos · Storyboard « Aujourd'hui »</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --accent:  #EB6A00;
+      --accent2: #70856C;
+      --accent-dim: rgba(235, 106, 0, 0.15);
+      --bg: #000;
+      --text: #fff;
+      --text-dim: rgba(255,255,255,0.4);
+      --header-h: 52px;
+      --strip-h: 108px;
+      --font: 'Space Grotesk', -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ── HEADER ───────────────────────────────────────── */
+    .header {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .brand-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent), 0 0 24px rgba(235,106,0,0.4);
+    }
+
+    .brand-name {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .brand-sep { color: var(--text-dim); font-weight: 300; }
+
+    .brand-sub {
+      font-size: 12px; font-weight: 300;
+      color: var(--text-dim); letter-spacing: 0.06em;
+    }
+
+    .nav-group {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .counter {
+      font-size: 12px; color: var(--text-dim);
+      letter-spacing: 0.06em; font-variant-numeric: tabular-nums;
+      min-width: 44px; text-align: right;
+    }
+
+    .counter em { color: var(--text); font-style: normal; font-weight: 600; }
+
+    .btn-nav {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent; color: var(--text);
+      border-radius: 6px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, color .2s, background .2s;
+      outline: none;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      border-color: var(--accent); color: var(--accent);
+      background: rgba(235,106,0,0.05);
+    }
+
+    .btn-nav:disabled { opacity: 0.18; cursor: default; }
+
+    /* ── STAGE ────────────────────────────────────────── */
+    .stage {
+      position: fixed;
+      top: var(--header-h); left: 0; right: 0;
+      bottom: var(--strip-h);
+      overflow: hidden;
+    }
+
+    /* ── SLIDES ───────────────────────────────────────── */
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 56px 300px 40px 80px;
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity;
+    }
+
+    .slide.is-active { opacity: 1; pointer-events: all; }
+
+    /* Per-slide gradients — palette Viteos #EB6A00 / #70856C */
+    .slide[data-id="1"] { background: radial-gradient(ellipse 70% 60% at 30% 55%, #1e0900 0%, #080200 50%, #000 100%); }
+    .slide[data-id="2"] { background: radial-gradient(ellipse 80% 65% at 25% 60%, #200b00 0%, #0c0400 45%, #000 100%); }
+    .slide[data-id="3"] { background: radial-gradient(ellipse 90% 70% at 55% 40%, #0a0e09 0%, #050805 50%, #000 100%); }
+    .slide[data-id="4"] { background: radial-gradient(ellipse 75% 65% at 35% 55%, #081209 0%, #040b04 50%, #000 100%); }
+    .slide[data-id="5"] { background: radial-gradient(ellipse 80% 70% at 60% 45%, #220c00 0%, #110600 50%, #000 100%); }
+    .slide[data-id="6"] { background: radial-gradient(ellipse 75% 65% at 40% 50%, #0b0e0a 0%, #060806 50%, #000 100%); }
+    .slide[data-id="7"] { background: radial-gradient(ellipse 80% 70% at 45% 55%, #091209 0%, #040804 50%, #000 100%); }
+    .slide[data-id="8"] { background: radial-gradient(ellipse 60% 55% at 50% 50%, #1a0800 0%, #090300 50%, #000 100%); }
+
+    /* Decorative glow top-right */
+    .slide::after {
+      content: '';
+      position: absolute;
+      width: 420px; height: 420px;
+      top: -140px; right: 6%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(235,106,0,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* ── SLIDE CONTENT ────────────────────────────────── */
+    .s-tc {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 10px;
+      opacity: 0;
+    }
+
+    .s-beat {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 36px;
+      opacity: 0;
+    }
+
+    .s-main { opacity: 0; }
+
+    .s-tagline {
+      font-size: clamp(30px, 4.2vw, 62px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      max-width: 820px;
+      margin-bottom: 20px;
+    }
+
+    .s-tagline .hi { color: var(--accent); }
+
+    .s-subline {
+      font-size: 13px; font-weight: 300;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 52px;
+    }
+
+    .s-stats {
+      display: flex; flex-wrap: wrap; gap: 40px 56px;
+      margin-bottom: 16px;
+    }
+
+    .stat { display: flex; flex-direction: column; gap: 5px; }
+
+    .stat-val {
+      font-size: clamp(22px, 2.8vw, 40px);
+      font-weight: 700; color: var(--accent);
+      line-height: 1; letter-spacing: -0.01em;
+    }
+
+    .stat-lbl {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent2);
+    }
+
+    .s-intro {
+      font-size: 12px; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 32px;
+    }
+
+    .s-footer {
+      margin-top: 32px;
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.06em;
+    }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; gap: 20px; }
+
+    .tl-item { display: flex; align-items: center; gap: 18px; }
+
+    .tl-year {
+      font-size: 12px; font-weight: 600;
+      color: var(--accent); letter-spacing: 0.1em;
+      width: 46px; flex-shrink: 0;
+    }
+
+    .tl-dash {
+      width: 32px; height: 1px;
+      background: linear-gradient(90deg, var(--accent) 0%, rgba(112,133,108,0.3) 100%);
+      flex-shrink: 0;
+    }
+
+    .tl-label { font-size: 20px; font-weight: 500; }
+
+    /* Projects */
+    .projects { display: flex; flex-direction: column; gap: 14px; }
+
+    .proj-item {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 22px; font-weight: 500;
+    }
+
+    .proj-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Quote */
+    .s-quote {
+      font-size: clamp(20px, 2.6vw, 36px);
+      font-weight: 300;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+      max-width: 700px;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 40px;
+    }
+
+    .s-quote::before { content: '«\00a0'; color: var(--accent); }
+    .s-quote::after  { content: '\00a0»'; color: var(--accent); }
+
+    .s-logo {
+      font-size: 28px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .s-note {
+      position: absolute; bottom: 28px; left: 80px;
+      font-size: 11px; color: rgba(255,255,255,0.2);
+      font-weight: 300; font-style: italic;
+      letter-spacing: 0.04em;
+      max-width: 560px;
+      opacity: 0;
+    }
+
+    /* ── LIGHT THREAD (SVG) ───────────────────────────── */
+    .light-thread {
+      position: absolute; inset: 0;
+      pointer-events: none; overflow: hidden;
+    }
+
+    .light-thread svg { width: 100%; height: 100%; }
+
+    .lp {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 1.5;
+      opacity: 0.25;
+      filter: drop-shadow(0 0 5px var(--accent)) drop-shadow(0 0 14px rgba(235,106,0,0.35));
+      stroke-linecap: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+    }
+
+    /* ── FILMSTRIP ────────────────────────────────────── */
+    .filmstrip {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: var(--strip-h);
+      background: #060606;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 28px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      z-index: 200;
+    }
+
+    .filmstrip::-webkit-scrollbar { display: none; }
+
+    .thumb {
+      flex: 0 0 auto;
+      width: 116px; height: 68px;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid transparent;
+      transition: border-color .25s, transform .2s, box-shadow .25s;
+    }
+
+    .thumb:hover { transform: translateY(-3px); }
+
+    .thumb.is-active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(235,106,0,0.25), 0 4px 20px rgba(235,106,0,0.18);
+    }
+
+    .thumb-bg { position: absolute; inset: 0; }
+
+    .thumb-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 7px 9px;
+    }
+
+    .thumb-num {
+      position: absolute; top: 5px; left: 7px;
+      font-size: 9px; font-weight: 700;
+      color: var(--accent); opacity: 0.85;
+      letter-spacing: 0.06em;
+    }
+
+    .thumb-beat {
+      font-size: 8.5px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #fff; line-height: 1.3;
+    }
+
+    .thumb-tc {
+      font-size: 8px; font-weight: 300;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* Thumb gradients — palette Viteos */
+    .thumb[data-id="1"] .thumb-bg { background: radial-gradient(ellipse at 30% 50%, #2e0e00 0%, #000 80%); }
+    .thumb[data-id="2"] .thumb-bg { background: radial-gradient(ellipse at 25% 60%, #2a0e00 0%, #0e0400 60%, #000 100%); }
+    .thumb[data-id="3"] .thumb-bg { background: radial-gradient(ellipse at 55% 40%, #0f1610 0%, #060906 60%, #000 100%); }
+    .thumb[data-id="4"] .thumb-bg { background: radial-gradient(ellipse at 35% 55%, #0a1a0b 0%, #050c05 60%, #000 100%); }
+    .thumb[data-id="5"] .thumb-bg { background: radial-gradient(ellipse at 60% 45%, #321000 0%, #180800 60%, #000 100%); }
+    .thumb[data-id="6"] .thumb-bg { background: radial-gradient(ellipse at 40% 50%, #101510 0%, #080c08 60%, #000 100%); }
+    .thumb[data-id="7"] .thumb-bg { background: radial-gradient(ellipse at 45% 55%, #0b1a0b 0%, #060e06 60%, #000 100%); }
+    .thumb[data-id="8"] .thumb-bg { background: radial-gradient(ellipse at 50% 50%, #221000 0%, #0c0500 60%, #000 100%); }
+
+    /* ── PROGRESS BAR ─────────────────────────────────── */
+    .progress-bar {
+      position: fixed;
+      top: var(--header-h); left: 0;
+      height: 2px; background: var(--accent);
+      opacity: 0.7;
+      z-index: 300;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── KEYBOARD HINT ────────────────────────────────── */
+    .key-hint {
+      position: fixed;
+      bottom: calc(var(--strip-h) + 12px); right: 20px;
+      font-size: 10px; color: rgba(255,255,255,0.15);
+      letter-spacing: 0.08em;
+      z-index: 150;
+      pointer-events: none;
+    }
+
+    /* ── SLIDE INFO PANEL ─────────────────────────────── */
+    .slide-info {
+      position: absolute;
+      right: 44px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 210px;
+      opacity: 0.2;
+      transition: opacity 0.35s ease;
+      cursor: default;
+      border-left: 1px solid rgba(255,255,255,0.14);
+      padding-left: 18px;
+      z-index: 10;
+    }
+
+    .slide-info:hover { opacity: 1; }
+
+    .info-block { margin-bottom: 18px; }
+    .info-block:last-child { margin-bottom: 0; }
+
+    .info-label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 5px;
+    }
+
+    .info-text {
+      font-size: 11.5px; font-weight: 300;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.82);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">Viteos</span>
+      <span class="brand-sep">&nbsp;·&nbsp;</span>
+      <span class="brand-sub">Storyboard · Aujourd'hui, Viteos c'est…</span>
+    </div>
+    <div class="nav-group">
+      <span class="counter"><em id="cur">01</em> / 08</span>
+      <button class="btn-nav" id="btn-prev" onclick="go(-1)">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M8.5 2L4 6.5L8.5 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="btn-nav" id="btn-next" onclick="go(1)">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M4.5 2L9 6.5L4.5 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- STAGE -->
+  <main class="stage" id="stage"></main>
+
+  <!-- FILMSTRIP -->
+  <div class="filmstrip" id="filmstrip"></div>
+
+  <!-- KEYBOARD HINT -->
+  <div class="key-hint">← → naviguer</div>
+
+<script>
+'use strict';
+
+/* ────────────────────────────────────────────────────────
+   SLIDE DATA
+──────────────────────────────────────────────────────── */
+const SLIDES = [
+  {
+    id: 1,
+    tc: '0 – 5s',
+    beat: 'Ouverture',
+    type: 'intro',
+    tagline: ['Aujourd\'hui,', 'Viteos c\'est…'],
+    note: 'Noir. Une étincelle s\'allume, un trait lumineux démarre sa course.',
+    svgPath: 'M -50 300 Q 300 100 650 280 Q 900 420 1100 180',
+    info: [
+      { label: 'Visuel', text: 'Noir total. Une étincelle jaillit et un fil lumineux démarre sa course à travers le cadre — le « fil de lumière » du film.' },
+      { label: 'À l\'écran', text: '« Aujourd\'hui, Viteos c\'est… » — typographie suisse animée. L\'anaphore qui structure tout le film.' },
+      { label: 'Technique', text: 'Shape layer + trim paths + glow sous After Effects. Nappe grave + spark audio.' },
+    ],
+  },
+  {
+    id: 2,
+    tc: '5 – 13s',
+    beat: 'L\'ancrage',
+    type: 'hero',
+    intro: 'Le réseau couvre',
+    heroVal: '100\'000+',
+    heroLabel: 'clients',
+    subline: 'actrice de la transition énergétique',
+    note: 'Le fil de lumière dessine la carte du canton de Neuchâtel.',
+    svgPath: 'M 80 500 Q 250 200 500 350 Q 750 500 950 200 Q 1100 50 1300 150',
+    info: [
+      { label: 'Visuel', text: 'Le fil de lumière trace en trait épuré la carte du canton de Neuchâtel — ancrage géographique fort.' },
+      { label: 'À l\'écran', text: '100\'000+ clients · « actrice de la transition énergétique ».' },
+      { label: 'Technique', text: 'Tracé SVG animé sur fond d\'archive dégradé. LUT unique : noirs crushés + accent couleur marque.' },
+    ],
+  },
+  {
+    id: 3,
+    tc: '13 – 25s',
+    beat: 'Le réseau',
+    type: 'stats',
+    intro: 'Le réseau livre',
+    stats: [
+      { val: '9,4 mio m³', lbl: 'Eau' },
+      { val: '190 GWh',    lbl: 'Chaleur' },
+      { val: '483 GWh',    lbl: 'Électricité' },
+      { val: '908 GWh',    lbl: 'Gaz' },
+    ],
+    footer: '75 millions investis chaque année',
+    note: 'Le fil se ramifie — les chiffres atterrissent en cadence.',
+    svgPath: 'M 0 400 C 200 150 350 450 550 250 C 750 50 900 350 1100 200 L 1350 300',
+    info: [
+      { label: 'Visuel', text: 'Le fil se ramifie sur le territoire. Archives infra quasi-désaturées en fond. Les chiffres atterrissent en cadence.' },
+      { label: 'À l\'écran', text: 'Eau 9,4 mio m³ · Chaleur 190 GWh · Électricité 483 GWh · Gaz 908 GWh · 75 mio investis.' },
+      { label: 'Technique', text: 'Compteurs odomètre animés (rolling numbers) — 100 % post-prod, effet premium sans tournage.' },
+    ],
+  },
+  {
+    id: 4,
+    tc: '25 – 35s',
+    beat: 'Les solutions',
+    type: 'stats',
+    intro: 'Des solutions concrètes',
+    stats: [
+      { val: '29 MWc', lbl: 'Solaire installé' },
+      { val: '144',    lbl: 'Réseaux de chaleur' },
+      { val: '62',     lbl: 'Bornes publiques' },
+    ],
+    footer: null,
+    note: 'Lumière = lumière solaire. Panneaux, bornes de recharge.',
+    svgPath: 'M -80 200 Q 200 400 500 180 Q 750 -20 1000 250 Q 1150 380 1350 220',
+    info: [
+      { label: 'Visuel', text: 'Lumière = lumière solaire. La couleur d\'accent devient la lumière du soleil. Panneaux et bornes de recharge en archives.' },
+      { label: 'À l\'écran', text: '29 MWc solaire · 144 RCP · 62 bornes publiques.' },
+      { label: 'Technique', text: 'Accent couleur réservé à la lumière et aux chiffres. Image désaturée + glow = effet luxe sans budget.' },
+    ],
+  },
+  {
+    id: 5,
+    tc: '35 – 45s',
+    beat: 'L\'énergie collective',
+    type: 'stats',
+    intro: 'Des femmes et des hommes',
+    stats: [
+      { val: '394',  lbl: 'Collaborateur·rices' },
+      { val: '14',   lbl: 'Apprenti·es' },
+      { val: '150+', lbl: 'Métiers' },
+      { val: '100+', lbl: 'Partenariats' },
+    ],
+    footer: null,
+    note: 'Rupture chaude : visages, équipes, événements. Le fil respire.',
+    svgPath: 'M 0 250 S 280 500 560 300 S 840 80 1100 320 S 1250 430 1400 260',
+    info: [
+      { label: 'Visuel', text: 'Rupture de ton — chaleur humaine. Silhouettes rétroéclairées, visages, événements d\'équipe. Le fil ralentit et « respire ».' },
+      { label: 'À l\'écran', text: '394 collaborateur·rices · 14 apprenti·es · 150 métiers · 100+ partenariats.' },
+      { label: 'Audio', text: 'Transition musicale vers un registre plus humain et chaleureux. Moment d\'émotion au cœur du film.' },
+    ],
+  },
+  {
+    id: 6,
+    tc: '45 – 52s',
+    beat: 'La trajectoire',
+    type: 'timeline',
+    intro: 'Une histoire en mouvement',
+    items: [
+      { year: '2018', label: 'BETELEC' },
+      { year: '2019', label: 'Swiss-Green' },
+      { year: '2025', label: 'Viteos Solutions · FTG · EMG' },
+    ],
+    note: 'Le fil devient une timeline qui avance vers l\'horizon.',
+    svgPath: 'M -100 350 L 250 350 L 250 200 L 600 200 L 600 320 L 950 320 L 950 150 L 1350 150',
+    info: [
+      { label: 'Visuel', text: 'Le fil de lumière se transforme progressivement en frise chronologique. Jalons qui s\'allument l\'un après l\'autre.' },
+      { label: 'À l\'écran', text: '2018 BETELEC → 2019 Swiss-Green → 2025 Viteos Solutions, FTG, EMG.' },
+      { label: 'Technique', text: 'Morphing du fil en timeline — continuité graphique assurée par le tracé commun.' },
+    ],
+  },
+  {
+    id: 7,
+    tc: '52 – 58s',
+    beat: 'Les grands projets',
+    type: 'projects',
+    intro: 'Nos grands projets',
+    items: ['Site principal', 'Agriteos', 'STEP', 'Moyats'],
+    note: 'Le fil se résout dans les images de synthèse. Crescendo musical.',
+    svgPath: 'M -50 500 Q 150 100 400 300 Q 600 460 800 150 Q 950 20 1150 280 Q 1280 420 1400 100',
+    info: [
+      { label: 'Visuel', text: 'Le fil se résout dans les images de synthèse 3D. Site principal, Agriteos, STEP, Moyats s\'enchaînent en crescendo.' },
+      { label: 'À l\'écran', text: '« Nos grands projets » — les visuels 3D priment sur le texte. Pic émotionnel du film.' },
+      { label: 'Audio', text: 'Pic musical. C\'est le moment « wow » — les images de synthèse font le travail.' },
+    ],
+  },
+  {
+    id: 8,
+    tc: '58 – 60s',
+    beat: 'Signature',
+    type: 'quote',
+    quote: 'Ensemble, nous construisons l\'avenir énergétique du canton.',
+    note: 'Logo. La lumière se pose. Fondu au noir.',
+    svgPath: 'M 400 600 Q 500 400 600 350 Q 700 300 700 300',
+    info: [
+      { label: 'Visuel', text: 'Logo Viteos. Le fil de lumière se stabilise et s\'immobilise doucement. Vaste espace négatif.' },
+      { label: 'À l\'écran', text: '« Ensemble, nous construisons l\'avenir énergétique du canton. »' },
+      { label: 'Audio', text: 'Résolution musicale. Fondu au noir. Silence.' },
+    ],
+  },
+];
+
+/* ────────────────────────────────────────────────────────
+   BUILD SLIDES
+──────────────────────────────────────────────────────── */
+function buildSlideHTML(s) {
+  let main = '';
+
+  if (s.type === 'intro') {
+    main = `
+      <div class="s-tagline">
+        ${s.tagline.map((l, i) => i === 1
+          ? `<span class="hi">${l}</span>`
+          : l
+        ).join('<br>')}
+      </div>`;
+  }
+
+  else if (s.type === 'hero') {
+    main = `
+      <p class="s-intro">${s.intro}</p>
+      <div class="s-stats">
+        <div class="stat">
+          <div class="stat-val">${s.heroVal}</div>
+          <div class="stat-lbl">${s.heroLabel}</div>
+        </div>
+      </div>
+      <p class="s-subline">${s.subline}</p>`;
+  }
+
+  else if (s.type === 'stats') {
+    const statsHTML = s.stats.map(st =>
+      `<div class="stat">
+         <div class="stat-val">${st.val}</div>
+         <div class="stat-lbl">${st.lbl}</div>
+       </div>`
+    ).join('');
+    main = `
+      <p class="s-intro">${s.intro}</p>
+      <div class="s-stats">${statsHTML}</div>
+      ${s.footer ? `<p class="s-footer">${s.footer}</p>` : ''}`;
+  }
+
+  else if (s.type === 'timeline') {
+    const itemsHTML = s.items.map(it =>
+      `<div class="tl-item">
+         <span class="tl-year">${it.year}</span>
+         <div class="tl-dash"></div>
+         <span class="tl-label">${it.label}</span>
+       </div>`
+    ).join('');
+    main = `
+      <p class="s-intro">${s.intro}</p>
+      <div class="timeline">${itemsHTML}</div>`;
+  }
+
+  else if (s.type === 'projects') {
+    const projHTML = s.items.map(it =>
+      `<div class="proj-item">
+         <div class="proj-dot"></div>
+         <span>${it}</span>
+       </div>`
+    ).join('');
+    main = `
+      <p class="s-intro">${s.intro}</p>
+      <div class="projects">${projHTML}</div>`;
+  }
+
+  else if (s.type === 'quote') {
+    main = `
+      <blockquote class="s-quote">${s.quote}</blockquote>
+      <div class="s-logo">Viteos</div>`;
+  }
+
+  const infoHTML = (s.info || []).map(b =>
+    `<div class="info-block">
+       <div class="info-label">${b.label}</div>
+       <div class="info-text">${b.text}</div>
+     </div>`
+  ).join('');
+
+  return `
+    <div class="slide" data-id="${s.id}">
+      <div class="light-thread">
+        <svg viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid meet">
+          <path class="lp" d="${s.svgPath}" />
+        </svg>
+      </div>
+      <div class="s-tc">${s.tc}</div>
+      <div class="s-beat">Beat ${String(s.id).padStart(2,'0')} &nbsp;·&nbsp; ${s.beat}</div>
+      <div class="s-main">${main}</div>
+      <div class="s-note">${s.note}</div>
+      ${infoHTML ? `<div class="slide-info">${infoHTML}</div>` : ''}
+    </div>`;
+}
+
+/* ────────────────────────────────────────────────────────
+   BUILD FILMSTRIP
+──────────────────────────────────────────────────────── */
+function buildThumbHTML(s) {
+  return `
+    <div class="thumb" data-id="${s.id}" onclick="goTo(${s.id - 1})">
+      <div class="thumb-bg"></div>
+      <div class="thumb-overlay">
+        <div class="thumb-num">${String(s.id).padStart(2,'0')}</div>
+        <div class="thumb-beat">${s.beat}</div>
+        <div class="thumb-tc">${s.tc}</div>
+      </div>
+    </div>`;
+}
+
+/* ────────────────────────────────────────────────────────
+   INIT DOM
+──────────────────────────────────────────────────────── */
+const stage = document.getElementById('stage');
+const filmstrip = document.getElementById('filmstrip');
+
+stage.innerHTML = SLIDES.map(buildSlideHTML).join('');
+filmstrip.innerHTML = SLIDES.map(buildThumbHTML).join('');
+
+const slideEls = Array.from(stage.querySelectorAll('.slide'));
+const thumbEls = Array.from(filmstrip.querySelectorAll('.thumb'));
+
+/* ────────────────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────────────────── */
+let current = 0;
+let animating = false;
+
+/* ────────────────────────────────────────────────────────
+   ANIMATION
+──────────────────────────────────────────────────────── */
+function animateIn(el) {
+  const tc   = el.querySelector('.s-tc');
+  const beat = el.querySelector('.s-beat');
+  const main = el.querySelector('.s-main');
+  const note = el.querySelector('.s-note');
+  const lp   = el.querySelector('.lp');
+
+  // Clear any GSAP inline styles left by animateOut so CSS opacity:1 can apply
+  gsap.set(el, { clearProps: 'opacity,transform' });
+  gsap.set([tc, beat, main, note], { opacity: 0, y: 18 });
+  if (lp) gsap.set(lp, { strokeDashoffset: 1200 });
+
+  const tl = gsap.timeline({
+    onComplete: () => { animating = false; }
+  });
+
+  tl.to(tc,   { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' })
+    .to(beat,  { opacity: 1, y: 0, duration: 0.38, ease: 'power2.out' }, '-=0.18')
+    .to(main,  { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, '-=0.15')
+    .to(note,  { opacity: 1, y: 0, duration: 0.4,  ease: 'power2.out' }, '-=0.2');
+
+  if (lp) {
+    tl.to(lp, { strokeDashoffset: 0, duration: 2.0, ease: 'power1.inOut' }, 0.2);
+  }
+}
+
+function animateOut(el, cb) {
+  gsap.to(el, {
+    opacity: 0, y: -12, duration: 0.3,
+    ease: 'power2.in',
+    onComplete: () => {
+      el.classList.remove('is-active');
+      gsap.set(el, { opacity: 0, y: 0 });
+      cb && cb();
+    }
+  });
+}
+
+/* ────────────────────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────────────────────── */
+function goTo(idx) {
+  if (animating || idx === current) return;
+  if (idx < 0 || idx >= SLIDES.length) return;
+  animating = true;
+
+  const prev = slideEls[current];
+  const next = slideEls[idx];
+
+  animateOut(prev, () => {
+    current = idx;
+    updateUI();
+    next.classList.add('is-active');
+    animateIn(next);
+  });
+}
+
+function go(dir) { goTo(current + dir); }
+
+function updateUI() {
+  // counter
+  document.getElementById('cur').textContent = String(current + 1).padStart(2, '0');
+
+  // progress bar
+  const pct = ((current + 1) / SLIDES.length) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+
+  // thumbnails
+  thumbEls.forEach((t, i) => t.classList.toggle('is-active', i === current));
+
+  // nav buttons
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = current === SLIDES.length - 1;
+
+  // scroll thumb into view
+  thumbEls[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+/* ────────────────────────────────────────────────────────
+   KEYBOARD
+──────────────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  go(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    go(-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End')  goTo(SLIDES.length - 1);
+});
+
+/* ────────────────────────────────────────────────────────
+   FIRST SLIDE
+──────────────────────────────────────────────────────── */
+slideEls[0].classList.add('is-active');
+updateUI();
+animateIn(slideEls[0]);
+</script>
+</body>
+</html>
