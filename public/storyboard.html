@@ -143,17 +143,15 @@
       font-size: 10px; font-weight: 500;
       letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--accent2); margin-bottom: 10px;
-      opacity: 0;
     }
 
     .s-beat {
       font-size: 10px; font-weight: 400;
       letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-dim); margin-bottom: 36px;
-      opacity: 0;
     }
 
-    .s-main { opacity: 0; }
+    .s-main { }
 
     .s-tagline {
       font-size: clamp(30px, 4.2vw, 62px);
@@ -264,7 +262,6 @@
       font-weight: 300; font-style: italic;
       letter-spacing: 0.04em;
       max-width: 560px;
-      opacity: 0;
     }
 
     /* ── LIGHT THREAD (SVG) ───────────────────────────── */
@@ -733,7 +730,11 @@ let animating = false;
 /* ────────────────────────────────────────────────────────
    ANIMATION
 ──────────────────────────────────────────────────────── */
+const HAS_GSAP = typeof gsap !== 'undefined';
+
 function animateIn(el) {
+  if (!HAS_GSAP) { animating = false; return; }
+
   const tc   = el.querySelector('.s-tc');
   const beat = el.querySelector('.s-beat');
   const main = el.querySelector('.s-main');
@@ -760,6 +761,11 @@ function animateIn(el) {
 }
 
 function animateOut(el, cb) {
+  if (!HAS_GSAP) {
+    el.classList.remove('is-active');
+    cb && cb();
+    return;
+  }
   gsap.to(el, {
     opacity: 0, y: -12, duration: 0.3,
     ease: 'power2.in',
