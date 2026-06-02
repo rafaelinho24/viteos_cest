@@ -378,6 +378,13 @@
       transition: width .5s cubic-bezier(.4,0,.2,1);
     }
 
+    /* ── PARTICLE CANVAS ─────────────────────────────── */
+    .particle-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+
     /* ── TYPEWRITER CURSOR ───────────────────────────── */
     .tw-cursor {
       display: inline-block;
@@ -524,6 +531,7 @@ const SLIDES = [
       { val: '9,4 mio m³', lbl: 'Eau' },
     ],
     footer: '75 millions investis chaque année',
+    particles: 'network',
     note: 'Le fil se ramifie — les chiffres atterrissent en cadence.',
     svgPath: 'M 0 400 C 200 150 350 450 550 250 C 750 50 900 350 1100 200 L 1350 300',
     info: [
@@ -545,6 +553,7 @@ const SLIDES = [
       { val: '62',     lbl: 'Bornes de recharge publiques' },
     ],
     footer: null,
+    particles: 'solar',
     note: 'Lumière = lumière solaire. Panneaux, bornes de recharge.',
     svgPath: 'M -80 200 Q 200 400 500 180 Q 750 -20 1000 250 Q 1150 380 1350 220',
     info: [
@@ -566,6 +575,7 @@ const SLIDES = [
       { val: '150+', lbl: 'Métiers' },
     ],
     footer: '100+ partenariats',
+    particles: 'human',
     note: 'Rupture chaude : visages, équipes, événements. Le fil respire.',
     svgPath: 'M 0 250 S 280 500 560 300 S 840 80 1100 320 S 1250 430 1400 260',
     info: [
@@ -604,6 +614,7 @@ const SLIDES = [
     intro: 'Et demain ?',
     headline: 'Nos grands projets prennent vie',
     items: ['Site principal', 'Agriteos', 'STEP', 'Moyats'],
+    particles: 'factory',
     note: 'Le fil se résout dans les images de synthèse. Crescendo. Le pivot présent → futur.',
     svgPath: 'M -50 500 Q 150 100 400 300 Q 600 460 800 150 Q 950 20 1150 280 Q 1280 420 1400 100',
     info: [
@@ -713,6 +724,7 @@ function buildSlideHTML(s) {
 
   return `
     <div class="slide" data-id="${s.id}">
+      ${s.particles ? `<canvas class="particle-canvas" data-type="${s.particles}"></canvas>` : ''}
       <div class="light-thread">
         <svg viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid meet">
           <path class="lp" d="${s.svgPath}" />
@@ -758,6 +770,160 @@ const thumbEls = Array.from(filmstrip.querySelectorAll('.thumb'));
 ──────────────────────────────────────────────────────── */
 let current = 0;
 let animating = false;
+
+/* ────────────────────────────────────────────────────────
+   PARTICLE BACKGROUNDS
+──────────────────────────────────────────────────────── */
+const PBGS = new Map();
+
+function startSlideParticles(slideEl) {
+  const c = slideEl && slideEl.querySelector('.particle-canvas');
+  if (!c) return;
+  if (!PBGS.has(c)) PBGS.set(c, new ParticleBg(c));
+  PBGS.get(c).start();
+}
+function stopAllParticles() { PBGS.forEach(pb => pb.stop()); }
+
+class ParticleBg {
+  constructor(canvas) {
+    this.c = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.type = canvas.dataset.type;
+    this.pts = []; this.t = 0; this.raf = null; this.on = false;
+  }
+
+  start() {
+    this.on = true;
+    this.c.width  = this.c.offsetWidth;
+    this.c.height = this.c.offsetHeight;
+    this.pts = []; this.t = 0; this._nodes = null;
+    this._loop();
+  }
+  stop() { this.on = false; cancelAnimationFrame(this.raf); }
+  _loop() { if (!this.on) return; this._tick(); this.raf = requestAnimationFrame(() => this._loop()); }
+
+  _tick() {
+    const { ctx, c: { width: W, height: H } } = this;
+    ctx.clearRect(0, 0, W, H);
+    this.t++;
+    this._drawStatic(W, H);
+    this._spawnDraw(W, H);
+  }
+
+  _spawnDraw(W, H) {
+    const ctx = this.ctx;
+    if (this.pts.length < 280 && this.t % 2 === 0) {
+      const e = this._emit(W, H);
+      if (e) this.pts.push(e);
+    }
+    this.pts = this.pts.filter(p => {
+      p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+      if (p.life <= 0) return false;
+      ctx.save();
+      ctx.globalAlpha = p.life * 0.65;
+      ctx.fillStyle = p.col;
+      if (p.size > 1.5) { ctx.shadowBlur = 7; ctx.shadowColor = p.col; }
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, 6.28); ctx.fill();
+      ctx.restore();
+      return true;
+    });
+  }
+
+  _emit(W, H) {
+    const r = Math.random;
+    const O = '#EB6A00', G = '#70856C', WH = 'rgba(255,255,255,0.85)';
+    if (this.type === 'network') {
+      const ns = this._getNodes(W, H);
+      const a = ns[~~(r()*ns.length)], b = ns[~~(r()*ns.length)];
+      const d = Math.hypot(b.x-a.x, b.y-a.y);
+      if (d < W*.3 && d > 20) {
+        const sp = .7+r()*.9;
+        return { x:a.x, y:a.y, vx:(b.x-a.x)/d*sp, vy:(b.y-a.y)/d*sp,
+          life:d/sp/60, decay:1/(d/sp), col:r()>.4?O:WH, size:r()>.6?2:1 };
+      }
+    }
+    if (this.type === 'solar') {
+      return { x:W*.2+r()*W*.6, y:H*.42+r()*H*.2, vx:(r()-.5)*.35, vy:-(0.35+r()*.7),
+        life:1, decay:.007+r()*.005, col:r()>.35?O:G, size:.8+r()*1.4 };
+    }
+    if (this.type === 'human') {
+      const ang = r()*6.28, rad = 50+r()*120;
+      return { x:W*.5+Math.cos(ang)*rad, y:H*.43+Math.sin(ang)*rad,
+        vx:Math.cos(ang)*.22, vy:Math.sin(ang)*.22,
+        life:1, decay:.005+r()*.006, col:r()>.4?O:WH, size:.8+r()*1.6 };
+    }
+    if (this.type === 'factory') {
+      const ch = [{x:W*.35,y:H*.28},{x:W*.5,y:H*.2},{x:W*.65,y:H*.3}][~~(r()*3)];
+      return { x:ch.x+(r()-.5)*18, y:ch.y, vx:(r()-.5)*.5, vy:-(0.3+r()*.65),
+        life:1, decay:.004+r()*.004, col:r()>.5?'rgba(255,255,255,0.65)':G, size:1+r()*2.5 };
+    }
+    return null;
+  }
+
+  _getNodes(W, H) {
+    if (this._nodes) return this._nodes;
+    this._nodes = Array.from({length:20}, () =>
+      ({ x:W*.08+Math.random()*W*.84, y:H*.12+Math.random()*H*.76 }));
+    return this._nodes;
+  }
+
+  _drawStatic(W, H) {
+    const ctx = this.ctx, t = this.t, O='#EB6A00', G='#70856C';
+    if (this.type === 'network') {
+      const ns = this._getNodes(W, H);
+      ctx.save(); ctx.strokeStyle = G; ctx.lineWidth = .8;
+      for (let i=0;i<ns.length;i++) for (let j=i+1;j<ns.length;j++) {
+        if (Math.hypot(ns[i].x-ns[j].x,ns[i].y-ns[j].y) < W*.3) {
+          ctx.globalAlpha=.06; ctx.beginPath();
+          ctx.moveTo(ns[i].x,ns[i].y); ctx.lineTo(ns[j].x,ns[j].y); ctx.stroke();
+        }
+      }
+      ns.forEach((n,i) => {
+        const p=.5+.5*Math.sin(t*.05+i);
+        ctx.globalAlpha=.08+.06*p; ctx.fillStyle=O;
+        ctx.shadowBlur=8; ctx.shadowColor=O;
+        ctx.beginPath(); ctx.arc(n.x,n.y,2.5+p*1.5,0,6.28); ctx.fill();
+      });
+      ctx.restore();
+    }
+    else if (this.type === 'solar') {
+      const [COLS,ROWS,cW,cH,sx,sy] = [8,5,W*.5/8,H*.26/5,W*.25,H*.42];
+      ctx.save(); ctx.strokeStyle=G; ctx.lineWidth=.8;
+      for (let c=0;c<COLS;c++) for (let r=0;r<ROWS;r++) {
+        const x=sx+c*(cW+2), y=sy+r*(cH+2);
+        ctx.globalAlpha=.06+.02*Math.sin(t*.04+c*.5+r*.3);
+        ctx.strokeRect(x,y,cW,cH);
+        ctx.globalAlpha=.02; ctx.fillStyle=G; ctx.fillRect(x,y,cW,cH);
+      }
+      ctx.restore();
+    }
+    else if (this.type === 'human') {
+      const cx=W*.5, cy=H*.43;
+      ctx.save(); ctx.strokeStyle=O; ctx.lineWidth=1.5; ctx.globalAlpha=.1;
+      ctx.beginPath(); ctx.arc(cx,cy-95,28,0,6.28); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-18,cy-65); ctx.lineTo(cx+18,cy-65);
+      ctx.lineTo(cx+28,cy+10); ctx.lineTo(cx-28,cy+10); ctx.closePath(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-18,cy-55); ctx.lineTo(cx-56,cy-18);
+      ctx.moveTo(cx+18,cy-55); ctx.lineTo(cx+56,cy-18); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-12,cy+10); ctx.lineTo(cx-24,cy+90);
+      ctx.moveTo(cx+12,cy+10); ctx.lineTo(cx+24,cy+90); ctx.stroke();
+      ctx.restore();
+    }
+    else if (this.type === 'factory') {
+      ctx.save(); ctx.strokeStyle=G; ctx.lineWidth=1.2; ctx.globalAlpha=.07;
+      ctx.strokeRect(W*.28,H*.35,W*.44,H*.4);
+      ctx.strokeRect(W*.2,H*.24,W*.14,H*.51);
+      ctx.strokeRect(W*.66,H*.29,W*.12,H*.46);
+      ctx.strokeRect(W*.33,H*.18,W*.035,H*.17);
+      ctx.strokeRect(W*.48,H*.12,W*.035,H*.23);
+      ctx.strokeRect(W*.62,H*.21,W*.03,H*.09);
+      ctx.lineWidth=.7;
+      for(let i=0;i<4;i++) for(let j=0;j<2;j++)
+        ctx.strokeRect(W*(.32+i*.09),H*(.44+j*.1),W*.05,H*.065);
+      ctx.restore();
+    }
+  }
+}
 
 /* ────────────────────────────────────────────────────────
    ANIMATION
@@ -858,11 +1024,13 @@ function goTo(idx) {
   const prev = slideEls[current];
   const next = slideEls[idx];
 
+  stopAllParticles();
   animateOut(prev, () => {
     current = idx;
     updateUI();
     next.classList.add('is-active');
     animateIn(next);
+    startSlideParticles(next);
   });
 }
 
@@ -903,6 +1071,7 @@ document.addEventListener('keydown', e => {
 slideEls[0].classList.add('is-active');
 updateUI();
 animateIn(slideEls[0]);
+startSlideParticles(slideEls[0]);
 </script>
 </body>
 </html>
