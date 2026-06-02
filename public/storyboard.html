@@ -369,7 +369,21 @@
       transition: width .5s cubic-bezier(.4,0,.2,1);
     }
 
-    /* ── KEYBOARD HINT ────────────────────────────────── */
+    /* ── TYPEWRITER CURSOR ───────────────────────────── */
+    .tw-cursor {
+      display: inline-block;
+      color: var(--accent);
+      font-weight: 300;
+      margin-left: 1px;
+      opacity: 1;
+    }
+    .tw-blink { animation: tw-blink 0.55s step-end infinite; }
+    @keyframes tw-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── KEYBOARD HINT ───────────────────────────────── */
     .key-hint {
       position: fixed;
       bottom: calc(var(--strip-h) + 12px); right: 20px;
@@ -740,6 +754,40 @@ let animating = false;
 ──────────────────────────────────────────────────────── */
 const HAS_GSAP = typeof gsap !== 'undefined';
 
+/* Typewriter — écrit el caractère par caractère avec curseur clignotant */
+function typewriterSeq(slideEl) {
+  const TARGETS = '.s-intro, .s-tagline, .stat-val, .tl-label, .proj-item > span, .s-quote, .s-logo';
+  const els = [...slideEl.querySelectorAll(TARGETS)].filter(e => e.textContent.trim());
+
+  let t = 0;
+  els.forEach(el => {
+    const text = el.textContent.trim();
+    el.textContent = '';
+
+    const cur = document.createElement('span');
+    cur.textContent = '|';
+    cur.className = 'tw-cursor tw-blink';
+    el.appendChild(cur);
+
+    // vitesse adaptée : max 1.8s par élément
+    const dt = Math.min(0.045, 1.8 / text.length);
+
+    [...text].forEach((ch, i) => {
+      gsap.delayedCall(t + i * dt, () => el.insertBefore(document.createTextNode(ch), cur));
+    });
+
+    const dur = text.length * dt;
+    gsap.delayedCall(t + dur + 0.05, () => {
+      cur.classList.remove('tw-blink');
+      gsap.to(cur, { opacity: 0, duration: 0.12, delay: 0.4, onComplete: () => cur.remove() });
+    });
+
+    t += dur + 0.18;
+  });
+
+  return t; // durée totale estimée
+}
+
 function animateIn(el) {
   if (!HAS_GSAP) { animating = false; return; }
 
@@ -749,22 +797,26 @@ function animateIn(el) {
   const note = el.querySelector('.s-note');
   const lp   = el.querySelector('.lp');
 
-  // Clear any GSAP inline styles left by animateOut so CSS opacity:1 can apply
   gsap.set(el, { clearProps: 'opacity,transform' });
-  gsap.set([tc, beat, main, note], { opacity: 0, y: 18 });
+  gsap.set([tc, beat, note], { opacity: 0, y: 18 });
+  gsap.set(main, { opacity: 0 });
   if (lp) gsap.set(lp, { strokeDashoffset: 1200 });
 
-  const tl = gsap.timeline({
-    onComplete: () => { animating = false; }
-  });
+  const tl = gsap.timeline();
 
-  tl.to(tc,   { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' })
-    .to(beat,  { opacity: 1, y: 0, duration: 0.38, ease: 'power2.out' }, '-=0.18')
-    .to(main,  { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, '-=0.15')
-    .to(note,  { opacity: 1, y: 0, duration: 0.4,  ease: 'power2.out' }, '-=0.2');
+  tl.to(tc,  { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' })
+    .to(beat, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.15')
+    .add(() => {
+      // Vide les textes ET rend main visible — l'effet typewriter prend le relai
+      const twDur = typewriterSeq(el);
+      gsap.set(main, { opacity: 1 });
+      // La note apparaît après la fin estimée du typewriter
+      gsap.to(note, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', delay: twDur });
+      gsap.delayedCall(twDur + 0.5, () => { animating = false; });
+    }, '+=0.1');
 
   if (lp) {
-    tl.to(lp, { strokeDashoffset: 0, duration: 2.0, ease: 'power1.inOut' }, 0.2);
+    tl.to(lp, { strokeDashoffset: 0, duration: 2.2, ease: 'power1.inOut' }, 0.3);
   }
 }
 
