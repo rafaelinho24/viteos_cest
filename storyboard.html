@@ -202,6 +202,15 @@
       letter-spacing: 0.06em;
     }
 
+    .s-headline {
+      font-size: clamp(22px, 2.8vw, 38px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
     /* Timeline */
     .timeline { display: flex; flex-direction: column; gap: 20px; }
 
@@ -481,7 +490,6 @@ const SLIDES = [
     svgPath: 'M -50 300 Q 300 100 650 280 Q 900 420 1100 180',
     info: [
       { label: 'Fond', text: 'Noir pur — le vide est un choix, pas un manque.' },
-      { label: 'Visuel', text: 'Une étincelle jaillit et un fil lumineux démarre sa course à travers le cadre — le « fil de lumière » du film.' },
       { label: 'À l\'écran', text: '« Aujourd\'hui, Viteos c\'est… » — typo ES Klarheit Kurrent animée. L\'anaphore qui structure tout le film.' },
       { label: 'Technique', text: 'Shape layer + trim paths + glow (After Effects). Nappe grave + spark audio.' },
     ],
@@ -491,16 +499,15 @@ const SLIDES = [
     tc: '5 – 13s',
     beat: 'L\'ancrage',
     type: 'hero',
-    intro: 'Le réseau couvre',
-    heroVal: '100\'000+',
-    heroLabel: 'clients',
-    subline: 'actrice de la transition énergétique',
+    intro: 'Un acteur de la transition énergétique',
+    heroVal: '+100\'000',
+    heroLabel: 'clients desservis',
     note: 'Le fil de lumière dessine la carte du canton de Neuchâtel.',
     svgPath: 'M 80 500 Q 250 200 500 350 Q 750 500 950 200 Q 1100 50 1300 150',
     info: [
       { label: 'Fond', text: 'Noir pur — ou texture topographique très discrète en filigrane.' },
-      { label: 'Visuel', text: 'Le fil trace en trait épuré la carte du canton de Neuchâtel — ancrage géographique fort.' },
-      { label: 'À l\'écran', text: '100\'000+ clients · « actrice de la transition énergétique ».' },
+      { label: 'Petit titre', text: '« Un acteur de la transition énergétique » — complète l\'accroche d\'ouverture.' },
+      { label: 'À l\'écran', text: '+100\'000 clients desservis.' },
       { label: 'Technique', text: 'Tracé SVG animé. LUT unique : noirs crushés + accent couleur marque réservé à la lumière.' },
     ],
   },
@@ -509,20 +516,20 @@ const SLIDES = [
     tc: '13 – 25s',
     beat: 'Le réseau',
     type: 'stats',
-    intro: 'Le réseau livre',
+    intro: 'Un réseau de distribution d\'énergie et d\'eau',
     stats: [
-      { val: '9,4 mio m³', lbl: 'Eau' },
-      { val: '190 GWh',    lbl: 'Chaleur' },
-      { val: '483 GWh',    lbl: 'Électricité' },
       { val: '908 GWh',    lbl: 'Gaz' },
+      { val: '483 GWh',    lbl: 'Électricité' },
+      { val: '190 GWh',    lbl: 'Chaleur' },
+      { val: '9,4 mio m³', lbl: 'Eau' },
     ],
     footer: '75 millions investis chaque année',
     note: 'Le fil se ramifie — les chiffres atterrissent en cadence.',
     svgPath: 'M 0 400 C 200 150 350 450 550 250 C 750 50 900 350 1100 200 L 1350 300',
     info: [
       { label: 'Fond', text: 'Image défocalisée + sombre : infrastructures (conduites, lignes). Slow push lent 3–5 %. Désaturation totale sauf accent marque.' },
-      { label: 'Visuel', text: 'Le fil se ramifie sur le territoire. Les chiffres atterrissent en cadence sur fond d\'archive.' },
-      { label: 'À l\'écran', text: 'Eau 9,4 mio m³ · Chaleur 190 GWh · Électricité 483 GWh · Gaz 908 GWh · 75 mio investis.' },
+      { label: 'Petit titre', text: '« Un réseau de distribution d\'énergie et d\'eau »' },
+      { label: 'À l\'écran', text: '908 GWh gaz · 483 GWh électricité · 190 GWh chaleur · 9,4 mio m³ eau · (75 mio investis).' },
       { label: 'Technique', text: 'Compteurs odomètre animés — 100 % post-prod. Calque noir 40–60 % sur l\'archive. Grain unifié sur la maître.' },
     ],
   },
@@ -531,19 +538,19 @@ const SLIDES = [
     tc: '25 – 35s',
     beat: 'Les solutions',
     type: 'stats',
-    intro: 'Des solutions concrètes',
+    intro: 'Un moteur de la production locale et durable',
     stats: [
       { val: '29 MWc', lbl: 'Solaire installé' },
       { val: '144',    lbl: 'Réseaux de chaleur' },
-      { val: '62',     lbl: 'Bornes publiques' },
+      { val: '62',     lbl: 'Bornes de recharge publiques' },
     ],
     footer: null,
     note: 'Lumière = lumière solaire. Panneaux, bornes de recharge.',
     svgPath: 'M -80 200 Q 200 400 500 180 Q 750 -20 1000 250 Q 1150 380 1350 220',
     info: [
       { label: 'Fond', text: 'Image défocalisée + sombre : panneaux solaires, bornes de recharge. Drift latéral léger. Couleurs criardes désaturées.' },
-      { label: 'Visuel', text: 'Lumière = lumière solaire. L\'accent marque devient la lumière du soleil — continuité graphique du fil.' },
-      { label: 'À l\'écran', text: '29 MWc solaire · 144 RCP · 62 bornes publiques.' },
+      { label: 'Petit titre', text: '« Un moteur de la production locale et durable »' },
+      { label: 'À l\'écran', text: '29 MWc solaire · 144 RCP · 62 bornes de recharge publiques.' },
       { label: 'Technique', text: 'Calque noir 40–60 % sur archive. Drift latéral (jamais de mouvement rapide). Accent couleur seul = luxe.' },
     ],
   },
@@ -552,20 +559,19 @@ const SLIDES = [
     tc: '35 – 45s',
     beat: 'L\'énergie collective',
     type: 'stats',
-    intro: 'Des femmes et des hommes',
+    intro: 'Une énergie avant tout humaine',
     stats: [
       { val: '394',  lbl: 'Collaborateur·rices' },
       { val: '14',   lbl: 'Apprenti·es' },
       { val: '150+', lbl: 'Métiers' },
-      { val: '100+', lbl: 'Partenariats' },
     ],
-    footer: null,
+    footer: '100+ partenariats',
     note: 'Rupture chaude : visages, équipes, événements. Le fil respire.',
     svgPath: 'M 0 250 S 280 500 560 300 S 840 80 1100 320 S 1250 430 1400 260',
     info: [
       { label: 'Fond', text: 'Image défocalisée + sombre : visages, équipes, événements en contre-jour. Le flou transforme l\'archive en texture.' },
-      { label: 'Visuel', text: 'Rupture chaude. Silhouettes rétroéclairées — le fil ralentit et respire. Moment d\'émotion au cœur du film.' },
-      { label: 'À l\'écran', text: '394 collaborateur·rices · 14 apprenti·es · 150 métiers · 100+ partenariats.' },
+      { label: 'Petit titre', text: '« Une énergie avant tout humaine »' },
+      { label: 'À l\'écran', text: '394 collaborateur·rices · 14 apprenti·es · 150 métiers · (100+ partenariats).' },
       { label: 'Audio', text: 'Transition musicale vers un registre plus humain. Slow push uniquement — jamais de mouvement rapide.' },
     ],
   },
@@ -574,18 +580,18 @@ const SLIDES = [
     tc: '45 – 52s',
     beat: 'La trajectoire',
     type: 'timeline',
-    intro: 'Une histoire en mouvement',
+    intro: 'Un groupe qui grandit',
     items: [
-      { year: '2018', label: 'BETELEC' },
-      { year: '2019', label: 'Swiss-Green' },
-      { year: '2025', label: 'Viteos Solutions · FTG · EMG' },
+      { year: '2018', label: 'BETELEC · Swiss-Green' },
+      { year: '→ 2025', label: 'Viteos Solutions · FTG · Emg' },
     ],
+    footer: 'Six entités réunies',
     note: 'Le fil devient une timeline qui avance vers l\'horizon.',
     svgPath: 'M -100 350 L 250 350 L 250 200 L 600 200 L 600 320 L 950 320 L 950 150 L 1350 150',
     info: [
       { label: 'Fond', text: 'Noir pur — respiration avant le final. L\'alternance vide / plein crée le rythme du film.' },
-      { label: 'Visuel', text: 'Le fil se morphe en frise chronologique lumineuse. Jalons qui s\'allument. Sens de la progression.' },
-      { label: 'À l\'écran', text: '2018 BETELEC → 2019 Swiss-Green → 2025 Viteos Solutions, FTG, EMG.' },
+      { label: 'Petit titre', text: '« Un groupe qui grandit »' },
+      { label: 'À l\'écran', text: '2018 → 2025, six entités réunies : BETELEC · Swiss-Green · Viteos Solutions · FTG · Emg.' },
       { label: 'Technique AE', text: 'Le fil quitte la séq. 5 pendant qu\'il entame la séq. 7 — chevauchement des pré-compos sur la maître.' },
     ],
   },
@@ -594,14 +600,15 @@ const SLIDES = [
     tc: '52 – 58s',
     beat: 'Les grands projets',
     type: 'projects',
-    intro: 'Nos grands projets',
+    intro: 'Et demain ?',
+    headline: 'Nos grands projets prennent vie',
     items: ['Site principal', 'Agriteos', 'STEP', 'Moyats'],
-    note: 'Le fil se résout dans les images de synthèse. Crescendo musical.',
+    note: 'Le fil se résout dans les images de synthèse. Crescendo. Le pivot présent → futur.',
     svgPath: 'M -50 500 Q 150 100 400 300 Q 600 460 800 150 Q 950 20 1150 280 Q 1280 420 1400 100',
     info: [
       { label: 'Fond', text: 'Images de synthèse plein cadre — peu ou pas assombries. C\'est le pic : on les montre sans retenue.' },
-      { label: 'Visuel', text: 'Le fil se résout dans les rendus 3D. Site principal, Agriteos, STEP, Moyats en crescendo.' },
-      { label: 'À l\'écran', text: '« Nos grands projets » — les visuels priment. MJ sert de référence d\'ambiance pour le studio 3D.' },
+      { label: 'Pivot', text: '« Et demain ? » marque la bascule présent → futur. Sans ce pivot explicite, la projection arrive sans prévenir.' },
+      { label: 'À l\'écran', text: 'Nos grands projets prennent vie : Site principal · Agriteos · STEP · Moyats.' },
       { label: 'Audio', text: 'Pic musical — le moment wow. Glow, LUT et grain en calques d\'ajustement sur la maître uniquement.' },
     ],
   },
@@ -647,7 +654,7 @@ function buildSlideHTML(s) {
           <div class="stat-lbl">${s.heroLabel}</div>
         </div>
       </div>
-      <p class="s-subline">${s.subline}</p>`;
+      ${s.subline ? `<p class="s-subline">${s.subline}</p>` : ''}`;
   }
 
   else if (s.type === 'stats') {
@@ -667,13 +674,14 @@ function buildSlideHTML(s) {
     const itemsHTML = s.items.map(it =>
       `<div class="tl-item">
          <span class="tl-year">${it.year}</span>
-         <div class="tl-dash"></div>
+         ${it.year ? '<div class="tl-dash"></div>' : '<div style="width:32px"></div>'}
          <span class="tl-label">${it.label}</span>
        </div>`
     ).join('');
     main = `
       <p class="s-intro">${s.intro}</p>
-      <div class="timeline">${itemsHTML}</div>`;
+      <div class="timeline">${itemsHTML}</div>
+      ${s.footer ? `<p class="s-footer">${s.footer}</p>` : ''}`;
   }
 
   else if (s.type === 'projects') {
@@ -685,6 +693,7 @@ function buildSlideHTML(s) {
     ).join('');
     main = `
       <p class="s-intro">${s.intro}</p>
+      ${s.headline ? `<div class="s-headline">${s.headline}</div>` : ''}
       <div class="projects">${projHTML}</div>`;
   }
 
